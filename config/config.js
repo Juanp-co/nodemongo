@@ -1,0 +1,1 @@
+module.exports.SEED = 'Juan1+2+3+4+5+';
