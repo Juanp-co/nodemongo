@@ -8,7 +8,14 @@ var VerToken = require('../middlewares/auth');
 // Llamar usuarios
 //============================
 app.get( '/', (req, res, next) => {
-    Usuario.find({}, 'nombre email img rol').exec( (err , usuarios) => {
+
+    var desde = req.query.desde;
+    desde = Number(desde);
+
+    Usuario.find({}, 'nombre email img rol')
+    .skip(desde)
+    .limit(5)
+    .exec( (err , usuarios) => {
         if(err) {
             return res.status(500).json({
                 ok: false,
@@ -16,8 +23,18 @@ app.get( '/', (req, res, next) => {
                 errors : err
             })
         }
-        res.status(200).json({
-            usuarios: usuarios
+        Usuario.count({}, (err, totalUser)=>{
+            if(err) {
+                return res.status(500).json({
+                    ok: false,
+                    message: 'errors interno del server',
+                    errors : err
+                })
+            }
+            res.status(200).json({
+                usuarios: usuarios,
+                total: totalUser
+            })
         })
     });
 });
